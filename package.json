@@ -1,0 +1,25 @@
+{
+  "name": "@jsinek/react-native-skeleton",
+  "version": "1.0.0",
+  "description": "This package provides a base structure and supplemental utilities allowing for the creation of a flexible, customizeable, and powerful UI.",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jsinek/react-native-skeleton.git"
+  },
+  "keywords": [
+    "react-native",
+    "framework",
+    "navigation",
+    "ui"
+  ],
+  "author": "Jordan Sinek",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jsinek/react-native-skeleton/issues"
+  },
+  "homepage": "https://github.com/jsinek/react-native-skeleton#readme"
+}
