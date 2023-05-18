@@ -55,7 +55,7 @@ The base component of the app. This component is required and should be at the r
 
 ```
 import React from 'react';
-import {App, transition} from '@skeleton';
+import {App, transition} from '@jsinek/react-native-skeleton';
 import {LoadingScreen} from './screens/Loading';
 import {HomeScreen} from './screens/Home';
 import {LoginModal} from './screens/Login';
@@ -106,7 +106,7 @@ A wrapper component for screens. Allows header and footer components to be speci
 ```
 import React from 'react';
 import {Text} from 'react-native';
-import {Screen} from '@skeleton';
+import {Screen} from '@jsinek/react-native-skeleton';
 import {Header} from '../components/ui/Header';
 import {TabBar} from './components/ui/TabBar';
 
@@ -138,7 +138,7 @@ Adds the specified amount of space. Props are cumulative. Combining props will i
 ```
 import React from 'react';
 import {Text} from 'react-native';
-import {Screen} from '@skeleton';
+import {Screen} from '@jsinek/react-native-skeleton';
 import {Header} from '../components/ui/Header';
 import {TabBar} from './components/ui/TabBar';
 
@@ -179,7 +179,7 @@ The is an optional component that provides a means of displaying toast messages 
 
 ```
 import React from 'react';
-import {App, Toaster} from '@skeleton';
+import {App, Toaster} from '@jsinek/react-native-skeleton';
 import {screens} from './screens/config';
 
 export default () => (
@@ -212,7 +212,7 @@ A utility for navigating from screen to screen.
 ```
 import React from 'react';
 import {Text} from 'react-native';
-import {Screen} from '@skeleton';
+import {Screen} from '@jsinek/react-native-skeleton';
 
 export const HomeScreen () => (
    <Screen>
@@ -240,7 +240,7 @@ A utility for for displaying toast. This is only available if the **`<Toaster />
 ```
 import React from 'react';
 import {Text} from 'react-native';
-import {Screen, toast} from '@skeleton';
+import {Screen, toast} from '@jsinek/react-native-skeleton';
 
 export const HomeScreen () => {
   const refreshData = () => {
@@ -306,7 +306,7 @@ A variety of screen transitions are available to choose from.
 
 ```
 import React from 'react';
-import {App, transition} from '@skeleton';
+import {App, transition} from '@jsinek/react-native-skeleton';
 
 const screenConfig = [
       {
@@ -347,7 +347,7 @@ Interpolate this value to create your custom transitons.
 ```
 import React from 'react';
 import {Text} from 'react-native';
-import {Screen, toast, AnimatedValue} from '@skeleton';
+import {Screen, toast, AnimatedValue} from '@jsinek/react-native-skeleton';
 
 const customTransition = (transition: AnimatedValue) => {
   //return a style object containing interpolated values to control the animation
