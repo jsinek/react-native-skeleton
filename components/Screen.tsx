@@ -66,7 +66,7 @@ export const Screen = ({
     uiOpacity.setValue(1);
     Animated.timing(transition, {
       toValue: 1,
-      duration: 200,
+      duration: 160,
       useNativeDriver: true,
       easing: Easing.out(Easing.circle),
     }).start();
@@ -79,7 +79,7 @@ export const Screen = ({
 
       Animated.timing(transition, {
         toValue: 2,
-        duration: 600,
+        duration: 160,
         useNativeDriver: true,
         easing: Easing.out(Easing.circle),
       }).start();
@@ -88,16 +88,32 @@ export const Screen = ({
     }
   };
 
+  const beforeRemove = (e) => {
+    if (e.data.action.type !== 'RESET') {
+      e.preventDefault();
+
+      Animated.timing(transition, {
+        toValue: 0,
+        duration: 160,
+        useNativeDriver: true,
+        easing: Easing.out(Easing.circle),
+      }).start(() => {
+        try {
+          nav.dispatch(e.data.action);
+        } catch (e) {}
+      });
+    }
+  };
+
   onComponentMount(() => {
     addListener('focus', focus);
     addListener('blur', blur);
-
-    if (onBeforeRemove) addListener('beforeRemove', onBeforeRemove);
+    addListener('beforeRemove', beforeRemove);
 
     return () => {
       removeListener('focus', focus);
       removeListener('blur', blur);
-      if (onBeforeRemove) removeListener('beforeRemove', onBeforeRemove);
+      removeListener('beforeRemove', beforeRemove);
     };
   });
 
@@ -105,20 +121,22 @@ export const Screen = ({
     nav.tmpTransition?.(transition) || screenConfig?.transition?.(transition);
 
   return (
-    <View style={[styles.flex]}>
+    <>
       <Animated.View
         style={[styles.header, {opacity: uiOpacity}]}
-        onLayout={onHeaderLayout}>
+        onLayout={onHeaderLayout}
+      >
         {Header}
       </Animated.View>
-      <Animated.View style={[props.style, {flex: 1}, screenTransition]}>
+      <Animated.View style={[{flex: 1}, screenTransition]}>
         <Component
-          {...props}
           importantForAccessibility="no"
           showsVerticalScrollIndicator={false}
-          style={styles.flex}
+          keyboardShouldPersistTaps="handled"
+          {...props}
+          style={[styles.flex, props.style]}
           contentContainerStyle={[styles.flexGrow, props.contentContainerStyle]}
-          keyboardShouldPersistTaps="handled">
+        >
           {uiSpacing ? <Spacer header={!!Header} safeTop /> : null}
           {props.children}
           {uiSpacing ? <Spacer footer={!!Footer} safeBottom /> : null}
@@ -126,10 +144,11 @@ export const Screen = ({
       </Animated.View>
       <Animated.View
         style={[styles.footer, {opacity: uiOpacity}]}
-        onLayout={onFooterLayout}>
+        onLayout={onFooterLayout}
+      >
         {Footer}
       </Animated.View>
-    </View>
+    </>
   );
 };
 

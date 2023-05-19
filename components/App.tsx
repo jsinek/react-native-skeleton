@@ -35,26 +35,34 @@ export const App = ({
         }}
         {...navigationContainerProps}
         ref={navRef}
-        onReady={() => setNavigatorReady(true)}>
+        onReady={() => setNavigatorReady(true)}
+      >
         {navigatorReady ? (
           <>
             <Navigator
               initialRouteName={initialScreenName}
               screenOptions={{
                 headerShown: false,
-                cardOverlay: () => <ModalOverlay color={modalOverlayColor} />,
                 cardShadowEnabled: false,
                 animationEnabled: false,
-                presentation: 'transparentModal',
-              }}>
-              {screens?.map(config => (
+              }}
+            >
+              {screens?.map((config) => (
                 <Screen
                   {...config}
                   key={config.name}
                   name={config.name}
                   component={config.component}
                   options={
-                    config.modal ? {cardOverlayEnabled: true} : undefined
+                    config.modal
+                      ? {
+                          cardOverlay: () => (
+                            <ModalOverlay color={modalOverlayColor} />
+                          ),
+                          cardOverlayEnabled: true,
+                          presentation: 'transparentModal',
+                        }
+                      : undefined
                   }
                 />
               ))}
