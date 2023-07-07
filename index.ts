@@ -15,6 +15,7 @@ import { SpacerProps } from './components/Spacer';
 import { SkeletonNav, Transition, SkeletonNavigationConfig } from './types/skeleton';
 import { BeforeRemoveEventData, BeforeRemoveEvent } from './types/util';
 import { transition } from './navigation/transition';
+import { transitions } from './navigation/transitions';
 
 export {
   //components
@@ -29,6 +30,7 @@ export {
   onComponentMount,
   onComponentUnmount,
   transition,
+  transitions,
 
   //constants
   iOS,

@@ -1,7 +1,7 @@
-import {useLayoutEffect} from 'react';
+import {useEffect} from 'react';
 
 export const onComponentMount = (callback: () => void | (() => void)) =>
-  useLayoutEffect(() => callback?.(), []);
+  useEffect(() => callback?.(), []);
 
 export const onComponentUnmount = (callback: () => void) =>
-  useLayoutEffect(() => () => callback?.(), []);
+  useEffect(() => () => callback?.(), []);

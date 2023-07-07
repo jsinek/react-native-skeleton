@@ -4,12 +4,13 @@ import {navRef} from '../navigation/nav';
 import {Animated, ViewStyle} from 'react-native';
 import {AnimatedValue} from './animated';
 import {ToastProps} from '../components/Toaster/Toast';
+import { StackCardStyleInterpolator } from '@react-navigation/stack';
 
 //NativeStackScreenProps;
 export interface ScreenConfig {
   name: string;
   component: (props: any) => JSX.Element;
-  transition?: Transition;
+  transition?: StackCardStyleInterpolator;
   modal?: boolean;
 }
 

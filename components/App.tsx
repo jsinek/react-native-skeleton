@@ -5,9 +5,13 @@ import React, {useState} from 'react';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {AppProps, ScreenConfig} from '../types/skeleton';
 import {ModalOverlay} from './ModalOverlay';
+import { transitions } from '@jsinek/react-native-skeleton/navigation/transitions';
 
 export let screenConfigs: ScreenConfig[];
-const {Navigator, Screen} = createStackNavigator();
+const { Navigator, Screen } = createStackNavigator();
+export const navigator = {
+  ref: null,
+};
 
 export const App = ({
   screens,
@@ -22,6 +26,7 @@ export const App = ({
   return (
     <SafeAreaProvider>
       <NavigationContainer
+        ref={(ref) => (navigator.ref = ref)}
         theme={{
           dark: true,
           colors: {
@@ -42,9 +47,8 @@ export const App = ({
             <Navigator
               initialRouteName={initialScreenName}
               screenOptions={{
-                headerShown: false,
                 cardShadowEnabled: false,
-                animationEnabled: false,
+                animationEnabled: true,
               }}
             >
               {screens?.map((config) => (
@@ -54,15 +58,14 @@ export const App = ({
                   name={config.name}
                   component={config.component}
                   options={
-                    config.modal
-                      ? {
-                          cardOverlay: () => (
-                            <ModalOverlay color={modalOverlayColor} />
-                          ),
-                          cardOverlayEnabled: true,
-                          presentation: 'transparentModal',
-                        }
-                      : undefined
+                    {
+                      presentation: config.modal ? 'transparentModal' : undefined,
+                      cardOverlay: config.modal ? () => (
+                        <ModalOverlay color={modalOverlayColor} />
+                      ) : undefined,
+                      cardOverlayEnabled: config.modal ? true : undefined, 
+                      cardStyleInterpolator: config.transition || transitions.none
+                    }
                   }
                 />
               ))}

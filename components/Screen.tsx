@@ -1,5 +1,5 @@
 import {useNavigation} from '@react-navigation/native';
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {
   ScrollViewProps,
   StyleSheet,
@@ -8,14 +8,14 @@ import {
   LayoutChangeEvent,
   Animated,
   Dimensions,
-  Easing,
 } from 'react-native';
 import {onComponentMount} from '../hooks';
 import {Spacer} from './Spacer';
 import {AnimatedValue} from '../types/animated';
 import {nav} from '../navigation/nav';
-import {getScreenConfig, useScreenConfig} from '../navigation/screen';
+import {useScreenConfig} from '../navigation/screen';
 import {BeforeRemoveEvent} from '../types/util';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 export const screenHeaderHeights: {[key: string]: AnimatedValue} = {};
 export const screenFooterHeights: {[key: string]: AnimatedValue} = {};
 export const screenDimensions = Dimensions.get('screen');
@@ -23,9 +23,9 @@ export const screenDimensions = Dimensions.get('screen');
 export interface ScreenProps extends ScrollViewProps {
   onFocus?: () => void;
   onBlur?: () => void;
-  onBeforeRemove?: BeforeRemoveEvent;
-  Header?: React.ReactNode;
-  Footer?: React.ReactNode;
+  onBeforeRemove?: (BeforeRemoveEvent) => Promise<void>;
+  header?: React.ReactNode;
+  footer?: React.ReactNode;
   uiSpacing?: boolean;
   background?: React.ReactNode;
 }
@@ -34,17 +34,21 @@ export const Screen = ({
   onFocus,
   onBlur,
   onBeforeRemove,
-  Header,
-  Footer,
+  header,
+  footer,
   uiSpacing = true,
   ...props
 }: ScreenProps) => {
+  const safeInsets = useSafeAreaInsets();
   const screen = useRef(nav.getCurrentRoute()?.name || '');
   const screenConfig = useScreenConfig();
-  const [transition] = useState(new Animated.Value(0));
-  const [uiOpacity] = useState(new Animated.Value(0));
+  const navigation = useNavigation();
   const {addListener, removeListener} = useNavigation();
   const Component = props.scrollEnabled === false ? View : ScrollView;
+  
+  useEffect(() => {
+    navigation.setOptions({ header: () => header });
+  }, [header])
 
   if (!screenHeaderHeights[screen.current]) {
     screenHeaderHeights[screen.current] = new Animated.Value(0);
@@ -54,54 +58,38 @@ export const Screen = ({
     screenFooterHeights[screen.current] = new Animated.Value(0);
   }
 
-  const onHeaderLayout = (e: LayoutChangeEvent) => {
-    screenHeaderHeights[screen.current].setValue(e.nativeEvent.layout.height);
-  };
-
-  const onFooterLayout = (e: LayoutChangeEvent) => {
-    screenFooterHeights[screen.current].setValue(e.nativeEvent.layout.height);
+  const onFooterLayout = ({ nativeEvent: { layout: { height } } }: LayoutChangeEvent) => {
+    const footerHeight = height ? height - safeInsets.bottom : 0;
+    const screenName = nav.getCurrentRoute().name;
+    if (!screenFooterHeights[screenName]) {
+      screenFooterHeights[screenName] = new Animated.Value(footerHeight);
+    } else {
+      screenFooterHeights[screenName].setValue(footerHeight);  
+    }
   };
 
   const focus = () => {
-    uiOpacity.setValue(1);
-    Animated.timing(transition, {
-      toValue: 1,
-      duration: 160,
-      useNativeDriver: true,
-      easing: Easing.out(Easing.circle),
-    }).start();
+    if(screenConfig?.modal){
+      navigation.setOptions({ headerShown: false });
+    } else {
+      navigation.setOptions({ headerMode: 'float' });
+    }
     onFocus?.();
   };
 
   const blur = () => {
-    if (!getScreenConfig()?.modal) {
-      uiOpacity.setValue(0);
-
-      Animated.timing(transition, {
-        toValue: 2,
-        duration: 160,
-        useNativeDriver: true,
-        easing: Easing.out(Easing.circle),
-      }).start();
-
-      onBlur?.();
+    if(!screenConfig?.modal){
+      navigation.setOptions({ headerMode: 'screen' });
     }
+    onBlur?.();
   };
 
   const beforeRemove = (e) => {
-    if (e.data.action.type !== 'RESET') {
+    if (onBeforeRemove) {
       e.preventDefault();
-
-      Animated.timing(transition, {
-        toValue: 0,
-        duration: 160,
-        useNativeDriver: true,
-        easing: Easing.out(Easing.circle),
-      }).start(() => {
-        try {
-          nav.dispatch(e.data.action);
-        } catch (e) {}
-      });
+      onBeforeRemove?.(e).then(() => {
+        nav.dispatch(e.data.action);
+      })
     }
   };
 
@@ -109,7 +97,7 @@ export const Screen = ({
     addListener('focus', focus);
     addListener('blur', blur);
     addListener('beforeRemove', beforeRemove);
-
+    
     return () => {
       removeListener('focus', focus);
       removeListener('blur', blur);
@@ -117,18 +105,9 @@ export const Screen = ({
     };
   });
 
-  const screenTransition =
-    nav.tmpTransition?.(transition) || screenConfig?.transition?.(transition);
-
   return (
     <>
-      <Animated.View
-        style={[styles.header, {opacity: uiOpacity}]}
-        onLayout={onHeaderLayout}
-      >
-        {Header}
-      </Animated.View>
-      <Animated.View style={[{flex: 1}, screenTransition]}>
+      <Animated.View style={[{flex: 1}]}>
         <Component
           importantForAccessibility="no"
           showsVerticalScrollIndicator={false}
@@ -137,17 +116,16 @@ export const Screen = ({
           style={[styles.flex, props.style]}
           contentContainerStyle={[styles.flexGrow, props.contentContainerStyle]}
         >
-          {uiSpacing ? <Spacer header={!!Header} safeTop /> : null}
+          {uiSpacing ? <Spacer header={!!header} safeTop /> : null}
           {props.children}
-          {uiSpacing ? <Spacer footer={!!Footer} safeBottom /> : null}
+          {uiSpacing ? <Spacer footer={!!footer} safeBottom /> : null}
         </Component>
       </Animated.View>
-      <Animated.View
-        style={[styles.footer, {opacity: uiOpacity}]}
-        onLayout={onFooterLayout}
-      >
-        {Footer}
-      </Animated.View>
+      {footer ?
+        <Animated.View style={styles.footer} onLayout={onFooterLayout}>
+          {footer}
+        </Animated.View>
+      : footer}
     </>
   );
 };
