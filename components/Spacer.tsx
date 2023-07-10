@@ -1,7 +1,7 @@
 import React, {useRef} from 'react';
 import {Animated, View, ViewProps} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {screenFooterHeights, screenHeaderHeights} from './Screen';
+import {screenHeaderHeights, screenFooterHeights} from './Screen';
 import {nav} from '../navigation/nav';
 
 export interface SpacerProps extends ViewProps {

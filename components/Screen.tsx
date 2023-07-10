@@ -5,7 +5,6 @@ import {
   StyleSheet,
   View,
   ScrollView,
-  LayoutChangeEvent,
   Animated,
   Dimensions,
 } from 'react-native';
@@ -15,8 +14,8 @@ import {AnimatedValue} from '../types/animated';
 import {nav} from '../navigation/nav';
 import {useScreenConfig} from '../navigation/screen';
 import {BeforeRemoveEvent} from '../types/util';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-export const screenHeaderHeights: {[key: string]: AnimatedValue} = {};
+import { UI } from './UI';
+export const screenHeaderHeights: { [key: string]: AnimatedValue; } = {};
 export const screenFooterHeights: {[key: string]: AnimatedValue} = {};
 export const screenDimensions = Dimensions.get('screen');
 
@@ -39,7 +38,6 @@ export const Screen = ({
   uiSpacing = true,
   ...props
 }: ScreenProps) => {
-  const safeInsets = useSafeAreaInsets();
   const screen = useRef(nav.getCurrentRoute()?.name || '');
   const screenConfig = useScreenConfig();
   const navigation = useNavigation();
@@ -47,26 +45,17 @@ export const Screen = ({
   const Component = props.scrollEnabled === false ? View : ScrollView;
   
   useEffect(() => {
-    navigation.setOptions({ header: () => header });
-  }, [header])
+    navigation.setOptions({
+      header: () => <UI header={header} footer={footer} />
+    });
+  }, [header, footer])
 
   if (!screenHeaderHeights[screen.current]) {
     screenHeaderHeights[screen.current] = new Animated.Value(0);
   }
-
   if (!screenFooterHeights[screen.current]) {
     screenFooterHeights[screen.current] = new Animated.Value(0);
   }
-
-  const onFooterLayout = ({ nativeEvent: { layout: { height } } }: LayoutChangeEvent) => {
-    const footerHeight = height ? height - safeInsets.bottom : 0;
-    const screenName = nav.getCurrentRoute().name;
-    if (!screenFooterHeights[screenName]) {
-      screenFooterHeights[screenName] = new Animated.Value(footerHeight);
-    } else {
-      screenFooterHeights[screenName].setValue(footerHeight);  
-    }
-  };
 
   const focus = () => {
     if(screenConfig?.modal){
@@ -121,11 +110,6 @@ export const Screen = ({
           {uiSpacing ? <Spacer footer={!!footer} safeBottom /> : null}
         </Component>
       </Animated.View>
-      {footer ?
-        <Animated.View style={styles.footer} onLayout={onFooterLayout}>
-          {footer}
-        </Animated.View>
-      : footer}
     </>
   );
 };

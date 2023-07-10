@@ -1,17 +1,29 @@
 import {navRef} from '../navigation/nav';
 import {NavigationContainer} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
+import {StackCardInterpolationProps, StackNavigationOptions, createStackNavigator} from '@react-navigation/stack';
 import React, {useState} from 'react';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {AppProps, ScreenConfig} from '../types/skeleton';
 import {ModalOverlay} from './ModalOverlay';
-import { transitions } from '@jsinek/react-native-skeleton/navigation/transitions';
+import { transitions } from '../navigation/transitions';
 
 export let screenConfigs: ScreenConfig[];
 const { Navigator, Screen } = createStackNavigator();
 export const navigator = {
   ref: null,
 };
+
+
+type Transition = (props: StackCardInterpolationProps) => {};
+
+export interface NavigationOptions extends StackNavigationOptions {
+  cardStyleInterpolator?: Transition;
+}
+
+export const navOptions: { override: NavigationOptions } = {
+  override: {},
+};
+
 
 export const App = ({
   screens,
@@ -31,7 +43,7 @@ export const App = ({
           dark: true,
           colors: {
             primary: 'transparent',
-            background: 'transparent',
+            background: 'white',
             card: 'transparent',
             text: 'transparent',
             border: 'transparent',
@@ -49,6 +61,7 @@ export const App = ({
               screenOptions={{
                 cardShadowEnabled: false,
                 animationEnabled: true,
+                headerMode: 'float',
               }}
             >
               {screens?.map((config) => (
@@ -57,16 +70,15 @@ export const App = ({
                   key={config.name}
                   name={config.name}
                   component={config.component}
-                  options={
-                    {
-                      presentation: config.modal ? 'transparentModal' : undefined,
-                      cardOverlay: config.modal ? () => (
-                        <ModalOverlay color={modalOverlayColor} />
-                      ) : undefined,
-                      cardOverlayEnabled: config.modal ? true : undefined, 
-                      cardStyleInterpolator: config.transition || transitions.none
-                    }
-                  }
+                  options={() => ({
+                    presentation: config.modal ? 'transparentModal' : undefined,
+                    cardOverlay: config.modal ? () => (
+                      <ModalOverlay color={modalOverlayColor} />
+                    ) : undefined,
+                    cardOverlayEnabled: config.modal ? true : undefined,
+                    cardStyleInterpolator: config.transition || transitions.none,
+                    ...navOptions.override
+                  })}
                 />
               ))}
             </Navigator>

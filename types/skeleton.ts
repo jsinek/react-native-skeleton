@@ -5,6 +5,7 @@ import {Animated, ViewStyle} from 'react-native';
 import {AnimatedValue} from './animated';
 import {ToastProps} from '../components/Toaster/Toast';
 import { StackCardStyleInterpolator } from '@react-navigation/stack';
+import { NavigationOptions } from '@jsinek/react-native-skeleton/components/App';
 
 //NativeStackScreenProps;
 export interface ScreenConfig {
@@ -33,12 +34,12 @@ export type Transition = (
 export type SkeletonNavigationConfig = (
   name: string,
   params?: object,
-  transition?: Transition,
+  options?: NavigationOptions,
 ) => void;
 
 type Nav = typeof navRef;
 export interface SkeletonNav extends Nav {
-  tmpTransition?: Transition;
+  tmpTransition?: StackCardStyleInterpolator;
   goTo: SkeletonNavigationConfig;
   resetTo: SkeletonNavigationConfig;
   replace: SkeletonNavigationConfig;
