@@ -5,7 +5,7 @@ import {
   StackNavigationOptions,
   createStackNavigator,
 } from '@react-navigation/stack';
-import React from 'react';
+import React, { useState } from 'react';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {AppProps, ScreenConfig} from '../types/skeleton';
 import {ModalOverlay} from './ModalOverlay';
@@ -38,6 +38,7 @@ export const App = ({
   ...props
 }: AppProps) => {
   screenConfigs = screens;
+  const [navigatorReady, setNavigatorReady] = useState(false);
 
   return (
     <UIProvider defaultElements={uiElements}>
@@ -55,40 +56,46 @@ export const App = ({
             },
           }}
           {...navigationContainerProps}
-          ref={navRef}>
-          <Navigator
-            initialRouteName={initialScreenName}
-            screenOptions={{
-              header: () => <UI />,
-              headerStyleInterpolator: () => ({}),
-              cardShadowEnabled: false,
-              animationEnabled: true,
-              headerMode: 'float',
-            }}>
-            {screens?.map(config => {
-              UIElementSpacing.registerScreen(config.name);
+          ref={navRef}
+          onReady={() => setNavigatorReady(true)}>
+          {navigatorReady && (
+            <>
+              <Navigator
+                initialRouteName={initialScreenName}
+                screenOptions={{
+                  header: () => <UI />,
+                  headerStyleInterpolator: () => ({}),
+                  cardShadowEnabled: false,
+                  animationEnabled: true,
+                  headerMode: 'float',
+                }}>
+                {screens?.map(config => {
+                  UIElementSpacing.registerScreen(config.name);
 
-              return (
-                <Screen
-                  {...config}
-                  key={config.name}
-                  name={config.name}
-                  component={config.component}
-                  options={() => ({
-                    presentation: config.modal ? 'transparentModal' : undefined,
-                    cardOverlay: config.modal
-                      ? () => <ModalOverlay color={modalOverlayColor} />
-                      : undefined,
-                    cardOverlayEnabled: config.modal ? true : undefined,
-                    cardStyleInterpolator:
-                      config.transition || transitions.none,
-                    ...navOptions.override,
-                  })}
-                />
-              );
-            })}
-          </Navigator>
-          {props.children}
+                  return (
+                    <Screen
+                      {...config}
+                      key={config.name}
+                      name={config.name}
+                      component={config.component}
+                      options={() => ({
+                        presentation: config.modal ? 'transparentModal' : undefined,
+                        cardOverlay: config.modal
+                          ? () => <ModalOverlay color={modalOverlayColor} />
+                          : undefined,
+                        cardOverlayEnabled: config.modal ? true : undefined,
+                        cardStyleInterpolator:
+                          config.transition || transitions.none,
+                        ...navOptions.override,
+                      })}
+                    />
+                  );
+                })}
+                      
+              </Navigator>
+              {props.children}
+              </>
+          )}
         </NavigationContainer>
       </SafeAreaProvider>
     </UIProvider>
