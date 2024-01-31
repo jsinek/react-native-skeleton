@@ -234,7 +234,7 @@ export const HomeScreen () => (
 
 A utility for for displaying toast. This is only available if the **`<Toaster />`** component is included in your app.
 | Method | Parameters | Description |
-| ------- | -------- | ------- | :---------- |
+| ------- | -------- | :---------- |
 | `success` | message: `string` | Displays a toast message. |
 | `warning` | message: `string` | Displays a toast message. |
 | `error` | message: `string` | Displays a toast message. |
