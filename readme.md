@@ -11,7 +11,7 @@ Additionally, you can utilize the Screen component to remove complexity surround
 ## Installation
 
 ```
-yarn add jsinek/react-native-skeleton
+yarn add @jsinek/react-native-skeleton
 ```
 
 ###### Install dependencies
@@ -42,7 +42,7 @@ The base component of the app. This component is required and should be at the r
 | -------------------------- | -------------------------------------------------- | ----------------- | ---------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `screens`                  | <a href="#screen-config-type">`ScreenConfig[]`</a> |                   | `required` | A registry of navigable screens.                                                                                                                                                       |
 | `initialScreenName`        | `string`                                           |                   | `optional` | The name of the initial screen to display.                                                                                                                                             |
-| `uiElements`               | <a href="#ui-elements-type">`UIElements`</a>       |                   | `optional` | UI layer components that display at are anchored to the screen edges. These components are unaffected by navigation transitions.                                                       |
+| `uiElements`               | <a href="#ui-elements-type">`UIElements`</a>       |                   | `optional` | The default UI layer components that display at are anchored to the screen edges. These components are unaffected by navigation transitions. These UI components will be applied to all screens unless overridden at the screen level.                                                      |
 | `modalOverlayColor`        | `color`                                            | `rgba(0,0,0,0.5)` | `optional` | Sets the backdrop color of modals.                                                                                                                                                     |
 | `navigationContainerProps` | `string`                                           |                   | `optional` | Overrides base settings of the navigation container. Visit the <a href="https://reactnavigation.org/docs/stack-navigator#props" target="_blank">react-navigation docs</a> for details. |
 
