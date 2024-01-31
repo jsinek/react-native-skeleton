@@ -109,14 +109,15 @@ export const Screen = ({
       : null;
 
   return (
-    <Animated.View style={[{flex: 1, borderWidth: 1}, uiSpacingStyles]}>
+    <Animated.View style={[{flex: 1}, uiSpacingStyles]}>
       <Component
         importantForAccessibility="no"
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
         {...props}
         style={[styles.flex, props.style]}
-        contentContainerStyle={[styles.flexGrow, props.contentContainerStyle]}>
+        contentContainerStyle={[styles.flexGrow, props.contentContainerStyle]}
+      >
         {props.children}
       </Component>
     </Animated.View>
