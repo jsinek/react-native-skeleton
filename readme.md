@@ -42,6 +42,7 @@ The base component of the app. This component is required and should be at the r
 | -------------------------- | -------------------------------------------------- | ----------------- | ---------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `screens`                  | <a href="#screen-config-type">`ScreenConfig[]`</a> |                   | `required` | A registry of navigable screens.                                                                                                                                                       |
 | `initialScreenName`        | `string`                                           |                   | `optional` | The name of the initial screen to display.                                                                                                                                             |
+| `uiElements`               | <a href="#ui-elements-type">`UIElements`</a>       |                   | `optional` | UI layer components that display at are anchored to the screen edges. These components are unaffected by navigation transitions.                                                       |
 | `modalOverlayColor`        | `color`                                            | `rgba(0,0,0,0.5)` | `optional` | Sets the backdrop color of modals.                                                                                                                                                     |
 | `navigationContainerProps` | `string`                                           |                   | `optional` | Overrides base settings of the navigation container. Visit the <a href="https://reactnavigation.org/docs/stack-navigator#props" target="_blank">react-navigation docs</a> for details. |
 
@@ -50,6 +51,7 @@ The base component of the app. This component is required and should be at the r
 | Type                                                                     | Definition                                                                                                                                                        |
 | ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | <a id="screen-config-type" href="#screen-config-type">`ScreenConfig`</a> | {<br />&nbsp;&nbsp;name: `color`;<br />&nbsp;&nbsp;component: `Component`;<br />&nbsp;&nbsp;transition?: `Transition`;<br />&nbsp;&nbsp;modal?: `boolean`;<br />} |
+| <a id="ui-elements-type" href="#ui-elements-type">`UiElements`</a>       | {<br />&nbsp;&nbsp;top?: `ReactNode`;<br />&nbsp;&nbsp;bottom?: `ReactNode`;<br />&nbsp;&nbsp;left?: `ReactNode`;<br />&nbsp;&nbsp;right?: `ReactNode`;<br />}    |
 
 #### Example
 
@@ -86,18 +88,17 @@ export default () => (
 
 ### <a id="screen-component" href="#screen-component">\<Screen /></a>
 
-A wrapper component for screens. Allows header and footer components to be specified at a screen level rather than at an app level supporting more dynamic and flexible scenarios. Additionally provides ability to hook into navigation events.
+A wrapper component for screens. Allows ui components such as headers and tabbars to be specified at a screen level rather than at an app level, supporting more dynamic and flexible scenarios. Additionally provides ability to hook into navigation events.
 
 #### Props
 
-| Prop             | Type        | Default | Required   | Description                                                                                                 |
-| ---------------- | ----------- | ------- | ---------- | :---------------------------------------------------------------------------------------------------------- |
-| `header`         | `component` |         | `optional` | A component to display at the top of the screen. This component is uneffected by navigation transitions.    |
-| `footer`         | `component` |         | `optional` | A component to display at the bottom of the screen. This component is uneffected by navigation transitions. |
-| `uiSpacing`      | `boolean`   | `true`  | `optional` | Automatically adjusts the screen insets to account for Safe Areas and Header/Footer if applicable.          |
-| `onFocus`        | `callback`  |         | `optional` | A callback that fires each time a screen is focused.                                                        |
-| `onBlur`         | `callback`  |         | `optional` | A callback that fires when a screen loses focus.                                                            |
-| `onBeforeRemove` | `callback`  |         | `optional` | A callback that fires before a screen is removed from the stack.                                            |
+| Prop             | Type                                         | Default | Required   | Description                                                                                                                      |
+| ---------------- | -------------------------------------------- | ------- | ---------- | :------------------------------------------------------------------------------------------------------------------------------- |
+| `uiElements`     | <a href="#ui-elements-type">`UIElements`</a> |         | `optional` | UI layer components that display at are anchored to the screen edges. These components are unaffected by navigation transitions. |
+| `uiSpacing`      | `boolean`                                    | `true`  | `optional` | Automatically adjusts the screen insets to account for Safe Areas and UI Elements if applicable.                                 |
+| `onFocus`        | `callback`                                   |         | `optional` | A callback that fires each time a screen is focused.                                                                             |
+| `onBlur`         | `callback`                                   |         | `optional` | A callback that fires when a screen loses focus.                                                                                 |
+| `onBeforeRemove` | `callback`                                   |         | `optional` | A callback that fires before a screen is removed from the stack.                                                                 |
 
 **_Additionally inherits props from the <a href="https://reactnative.dev/docs/scrollview#props" target="_blank">ScrollView</a> component._**
 
@@ -111,7 +112,7 @@ import {Header} from '../components/ui/Header';
 import {TabBar} from './components/ui/TabBar';
 
 export const HomeScreen () => (
-   <Screen header={<Header title="Home" />} footer={<TabBar />} >
+   <Screen uiElements={{top: <Header title="Home" />, bottom: <TabBar />}}>
     <Text>Place your screen contents here.</Text>
    </Screen>
 );
@@ -127,8 +128,12 @@ Adds the specified amount of space. Props are cumulative. Combining props will i
 | ------------ | --------- | ------- | ---------- | :---------------------------------------------------------------------------------------------------------- |
 | `safeTop`    | `boolean` |         | `optional` | The safe area inset from the top of the screen. Typically the size of the status bar.                       |
 | `safeBottom` | `boolean` |         | `optional` | The safe area inset from bottom of the screen. Typically the size of the Home/Navigation Bar of the device. |
-| `header`     | `boolean` |         | `optional` | The height of the focused screen's header component.                                                        |
-| `footer`     | `boolean` |         | `optional` | The height of the focused screen's footer component.                                                        |
+| `uiTop`      | `boolean` |         | `optional` | The height of the focused screen's top edge anchored ui element component.                                  |
+| `uiBottom`   | `boolean` |         | `optional` | The height of the focused screen's bottom edge anchored ui element                                          |
+| component.   |
+| `uiLeft`     | `boolean` |         | `optional` | The height of the focused screen's left edge anchored ui element                                            |
+| component.   |
+| `uiRight`    | `boolean` |         | `optional` | The height of the focused screen's right edge anchored ui element component.                                |
 | `size`       | `number`  | `0`     | `optional` | A custom amount of space.                                                                                   |
 
 **_Additionally inherits props from the <a href="https://reactnative.dev/docs/view#props" target="_blank">View</a> component._**
@@ -137,17 +142,17 @@ Adds the specified amount of space. Props are cumulative. Combining props will i
 
 ```
 import React from 'react';
-import {Text} from 'react-native';
-import {Screen} from '@jsinek/react-native-skeleton';
-import {Header} from '../components/ui/Header';
-import {TabBar} from './components/ui/TabBar';
+import {View, Text} from 'react-native';
+import {Spacer} from '@jsinek/react-native-skeleton';
 
 export const Article () => (
-   <View >
+   <View>
+    <Spacer uiTop />
     <Text>Title</Text>
     <Text>Sub Title</Text>
     <Spacer size={20} />
     <Text>Paragraph</Text>
+    <Spacer safeBottom />
    </View>
 );
 ```

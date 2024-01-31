@@ -1,15 +1,17 @@
 import React, {useRef} from 'react';
 import {Animated, View, ViewProps} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {screenHeaderHeights, screenFooterHeights} from './Screen';
 import {nav} from '../navigation/nav';
+import {UIElementSpacing} from '@jsinek/react-native-skeleton/context/UI';
 
 export interface SpacerProps extends ViewProps {
   size?: number;
   safeTop?: boolean;
   safeBottom?: boolean;
-  header?: boolean;
-  footer?: boolean;
+  uiTop?: boolean;
+  uiBottom?: boolean;
+  uiLeft?: boolean;
+  uiRight?: boolean;
   flex?: boolean;
 }
 
@@ -18,15 +20,17 @@ export const Spacer = ({
   safeBottom,
   size = 0,
   flex,
-  header,
-  footer,
+  uiTop,
+  uiBottom,
+  uiLeft,
+  uiRight,
   ...props
 }: SpacerProps) => {
   const safeInsets = useSafeAreaInsets();
   const screen = useRef(nav.getCurrentRoute()?.name || '');
   let width = 0;
-  if (!header && safeTop) width += safeInsets.top;
-  if (!header && safeBottom) width += safeInsets.bottom;
+  if (!uiTop && safeTop) width += safeInsets.top;
+  if (!uiTop && safeBottom) width += safeInsets.bottom;
 
   if (typeof size === 'number') width += size;
 
@@ -34,18 +38,36 @@ export const Spacer = ({
     <View
       pointerEvents="none"
       {...props}
-      style={[flex ? {flex: 1} : null, props.style]}>
+      style={[flex ? {flex: 1, borderWidth: 10} : null, props.style]}>
       <View pointerEvents="none" style={[{width, aspectRatio: 1}]} />
-      {header ? (
+      {uiTop ? (
         <Animated.View
           pointerEvents="none"
-          style={{width: screenHeaderHeights[screen.current], aspectRatio: 1}}
+          style={{width: UIElementSpacing.top[screen.current], aspectRatio: 1}}
         />
       ) : null}
-      {footer ? (
+      {uiBottom ? (
         <Animated.View
           pointerEvents="none"
-          style={{width: screenFooterHeights[screen.current], aspectRatio: 1}}
+          style={{
+            width: UIElementSpacing.bottom[screen.current],
+            aspectRatio: 1,
+          }}
+        />
+      ) : null}
+      {uiLeft ? (
+        <Animated.View
+          pointerEvents="none"
+          style={{width: UIElementSpacing.left[screen.current], aspectRatio: 1}}
+        />
+      ) : null}
+      {uiRight ? (
+        <Animated.View
+          pointerEvents="none"
+          style={{
+            width: UIElementSpacing.right[screen.current],
+            aspectRatio: 1,
+          }}
         />
       ) : null}
     </View>

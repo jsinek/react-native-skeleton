@@ -1,30 +1,30 @@
 import {useNavigation} from '@react-navigation/native';
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect} from 'react';
 import {
+  Animated,
   ScrollViewProps,
   StyleSheet,
   View,
   ScrollView,
-  Animated,
   Dimensions,
 } from 'react-native';
 import {onComponentMount} from '../hooks';
-import {Spacer} from './Spacer';
-import {AnimatedValue} from '../types/animated';
 import {nav} from '../navigation/nav';
 import {useScreenConfig} from '../navigation/screen';
-import {BeforeRemoveEvent} from '../types/util';
-import { UI } from './UI';
-export const screenHeaderHeights: { [key: string]: AnimatedValue; } = {};
-export const screenFooterHeights: {[key: string]: AnimatedValue} = {};
+import {BeforeRemoveEvent} from '../types/events';
+import {
+  UIElements,
+  UIContextManipulator,
+  UIElementSpacing,
+  UIAnchor,
+} from '../context/UI';
 export const screenDimensions = Dimensions.get('screen');
 
 export interface ScreenProps extends ScrollViewProps {
   onFocus?: () => void;
   onBlur?: () => void;
-  onBeforeRemove?: (BeforeRemoveEvent) => Promise<void>;
-  header?: React.ReactNode;
-  footer?: React.ReactNode;
+  onBeforeRemove?: (event: BeforeRemoveEvent) => Promise<void>;
+  uiElements?: UIElements;
   uiSpacing?: boolean;
   background?: React.ReactNode;
 }
@@ -33,52 +33,56 @@ export const Screen = ({
   onFocus,
   onBlur,
   onBeforeRemove,
-  header,
-  footer,
+  uiElements,
   uiSpacing = true,
   ...props
 }: ScreenProps) => {
-  const screen = useRef(nav.getCurrentRoute()?.name || '');
   const screenConfig = useScreenConfig();
   const navigation = useNavigation();
   const {addListener, removeListener} = useNavigation();
   const Component = props.scrollEnabled === false ? View : ScrollView;
-  
-  useEffect(() => {
-    navigation.setOptions({
-      header: () => <UI header={header} footer={footer} />
-    });
-  }, [header, footer])
 
-  if (!screenHeaderHeights[screen.current]) {
-    screenHeaderHeights[screen.current] = new Animated.Value(0);
-  }
-  if (!screenFooterHeights[screen.current]) {
-    screenFooterHeights[screen.current] = new Animated.Value(0);
-  }
+  const setUiElements = () => {
+    if (uiElements) {
+      for (const key in uiElements) {
+        const anchor = key as UIAnchor;
+        if (!uiElements[anchor]) {
+          uiElements[anchor] = <></>;
+        }
+      }
+    }
+
+    UIContextManipulator?.setElements({...uiElements});
+  };
+
+  useEffect(() => {
+    setUiElements();
+  }, [uiElements]);
 
   const focus = () => {
-    if(screenConfig?.modal){
-      navigation.setOptions({ headerShown: false });
+    setUiElements();
+
+    if (screenConfig?.modal) {
+      navigation.setOptions({headerShown: false});
     } else {
-      navigation.setOptions({ headerMode: 'float' });
+      navigation.setOptions({headerMode: 'float'});
     }
     onFocus?.();
   };
 
   const blur = () => {
-    if(!screenConfig?.modal){
-      navigation.setOptions({ headerMode: 'screen' });
+    if (!screenConfig?.modal) {
+      navigation.setOptions({headerMode: 'screen'});
     }
     onBlur?.();
   };
 
-  const beforeRemove = (e) => {
+  const beforeRemove = (e: BeforeRemoveEvent) => {
     if (onBeforeRemove) {
       e.preventDefault();
       onBeforeRemove?.(e).then(() => {
         nav.dispatch(e.data.action);
-      })
+      });
     }
   };
 
@@ -86,7 +90,7 @@ export const Screen = ({
     addListener('focus', focus);
     addListener('blur', blur);
     addListener('beforeRemove', beforeRemove);
-    
+
     return () => {
       removeListener('focus', focus);
       removeListener('blur', blur);
@@ -94,23 +98,28 @@ export const Screen = ({
     };
   });
 
+  const uiSpacingStyles =
+    uiSpacing && screenConfig
+      ? {
+          marginTop: UIElementSpacing.top[screenConfig.name],
+          marginLeft: UIElementSpacing.left[screenConfig.name],
+          marginBottom: UIElementSpacing.bottom[screenConfig.name],
+          marginRight: UIElementSpacing.right[screenConfig.name],
+        }
+      : null;
+
   return (
-    <>
-      <Animated.View style={[{flex: 1}]}>
-        <Component
-          importantForAccessibility="no"
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-          {...props}
-          style={[styles.flex, props.style]}
-          contentContainerStyle={[styles.flexGrow, props.contentContainerStyle]}
-        >
-          {uiSpacing ? <Spacer header={!!header} safeTop /> : null}
-          {props.children}
-          {uiSpacing ? <Spacer footer={!!footer} safeBottom /> : null}
-        </Component>
-      </Animated.View>
-    </>
+    <Animated.View style={[{flex: 1, borderWidth: 1}, uiSpacingStyles]}>
+      <Component
+        importantForAccessibility="no"
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        {...props}
+        style={[styles.flex, props.style]}
+        contentContainerStyle={[styles.flexGrow, props.contentContainerStyle]}>
+        {props.children}
+      </Component>
+    </Animated.View>
   );
 };
 

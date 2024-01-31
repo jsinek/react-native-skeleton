@@ -4,8 +4,9 @@ import {navRef} from '../navigation/nav';
 import {Animated, ViewStyle} from 'react-native';
 import {AnimatedValue} from './animated';
 import {ToastProps} from '../components/Toaster/Toast';
-import { StackCardStyleInterpolator } from '@react-navigation/stack';
-import { NavigationOptions } from '@jsinek/react-native-skeleton/components/App';
+import {StackCardStyleInterpolator} from '@react-navigation/stack';
+import {NavigationOptions} from '@jsinek/react-native-skeleton/components/App';
+import {UIElements} from '@jsinek/react-native-skeleton/context/UI';
 
 //NativeStackScreenProps;
 export interface ScreenConfig {
@@ -19,8 +20,7 @@ export interface AppProps {
   navigationContainerProps?: Omit<ScreenContainerProps, 'children'>;
   screens: ScreenConfig[];
   initialScreenName?: string;
-  header?: React.ReactNode;
-  footer?: React.ReactNode;
+  uiElements?: Partial<UIElements>;
   background?: React.ReactNode;
   toast?: JSXElementConstructor<ToastProps>;
   children?: React.ReactNode;

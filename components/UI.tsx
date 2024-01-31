@@ -1,46 +1,94 @@
 import React from 'react';
+import {Dimensions, LayoutChangeEvent, StyleSheet, View} from 'react-native';
 import {
-  Animated,
-  Dimensions,
-  View,
-} from 'react-native';
-import {AnimatedValue} from '../types/animated';
-import { useSafeAreaFrame, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { screenFooterHeights } from './Screen';
-import { nav } from '../navigation/nav';
-export const screenHeaderHeights: {[key: string]: AnimatedValue} = {};
+  useSafeAreaFrame,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
+import {nav} from '../navigation/nav';
+import {UIAnchor, UIContext, UIElementSpacing} from '../context/UI';
 export const screenDimensions = Dimensions.get('screen');
 
 export interface UIProps {
   header?: React.ReactNode;
   footer?: React.ReactNode;
+  leftSidebar?: React.ReactNode;
+  rightSidebar?: React.ReactNode;
 }
 
-export const UI = ({
-  header,
-  footer,
-}: UIProps) => {
+export const UI = () => {
   const safeFrame = useSafeAreaFrame();
   const safeInsets = useSafeAreaInsets();
-  const onFooterLayout = ({ nativeEvent: { layout: { height } } }) => { 
+
+  const onlayout = (anchor: UIAnchor, event: LayoutChangeEvent) => {
     const screen = nav.getCurrentRoute()?.name || '';
+    const layout = event.nativeEvent.layout;
 
-    if (!screenFooterHeights[screen]) {
-      screenFooterHeights[screen] = new Animated.Value(0);
-    }
-
-    screenFooterHeights[screen].setValue(height - (safeInsets.bottom || 0));
-  }
+    const size =
+      (anchor === UIAnchor.LEFT || anchor === UIAnchor.RIGHT
+        ? layout.width
+        : layout.height) - (safeInsets[anchor] || 0);
+    UIElementSpacing.setValue(screen, anchor, size);
+  };
 
   return (
-    <>
-      {header}
-      <View style={{position: 'absolute',top: safeFrame.height, left: 0, right: 0}}>
-        <View style={{position: 'absolute', bottom: 0, left:0, right: 0}} onLayout={onFooterLayout}>
-          {footer}
-        </View>
-      </View>
-    </>
+    <UIContext.Consumer>
+      {context => (
+        <>
+          {!!context?.top && context?.top}
+
+          {!!context?.left && (
+            <View
+              style={styles.leftSidebarWrapper}
+              onLayout={event => onlayout(UIAnchor.LEFT, event)}>
+              {context?.left}
+            </View>
+          )}
+
+          {!!context?.right && (
+            <View
+              style={styles.rightSidebarWrapper}
+              onLayout={event => onlayout(UIAnchor.RIGHT, event)}>
+              {context?.right}
+            </View>
+          )}
+
+          {!!context?.bottom && (
+            <View style={[styles.footerAnchor, {top: safeFrame.height}]}>
+              <View
+                style={styles.footerWrapper}
+                onLayout={event => onlayout(UIAnchor.BOTTOM, event)}>
+                {context?.bottom}
+              </View>
+            </View>
+          )}
+        </>
+      )}
+    </UIContext.Consumer>
   );
 };
 
+const styles = StyleSheet.create({
+  leftSidebarWrapper: {
+    position: 'absolute',
+    height: screenDimensions.height,
+    left: 0,
+    top: 0,
+  },
+  rightSidebarWrapper: {
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    height: screenDimensions.height,
+  },
+  footerAnchor: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+  },
+  footerWrapper: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+  },
+});
