@@ -10,8 +10,7 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {AppProps, ScreenConfig} from '../types/skeleton';
 import {ModalOverlay} from './ModalOverlay';
 import {transitions} from '../navigation/transitions';
-import {UI} from './UI';
-import {UIElementSpacing, UIProvider} from '../context/UI';
+import {UIProvider} from '../context/UI';
 
 export let screenConfigs: ScreenConfig[];
 const {Navigator, Screen} = createStackNavigator();
@@ -63,15 +62,11 @@ export const App = ({
               <Navigator
                 initialRouteName={initialScreenName}
                 screenOptions={{
-                  header: () => <UI />,
-                  headerStyleInterpolator: () => ({}),
+                  // headerStyleInterpolator: () => ({}),
                   cardShadowEnabled: false,
-                  animationEnabled: true,
                   headerMode: 'float',
                 }}>
                 {screens?.map(config => {
-                  UIElementSpacing.registerScreen(config.name);
-
                   return (
                     <Screen
                       {...config}

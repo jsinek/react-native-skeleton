@@ -1,5 +1,5 @@
 import {useNavigation} from '@react-navigation/native';
-import React, {useEffect} from 'react';
+import React from 'react';
 import {
   Animated,
   ScrollViewProps,
@@ -12,12 +12,8 @@ import {onComponentMount} from '../hooks';
 import {nav} from '../navigation/nav';
 import {useScreenConfig} from '../navigation/screen';
 import {BeforeRemoveEvent} from '../types/events';
-import {
-  UIElements,
-  UIContextManipulator,
-  UIElementSpacing,
-  UIAnchor,
-} from '../context/UI';
+import {UIElements, UIContextManipulator, UIElementSpacing} from '../context/UI';
+import { UI } from '@jsinek/react-native-skeleton/components/UI';
 export const screenDimensions = Dimensions.get('screen');
 
 export interface ScreenProps extends ScrollViewProps {
@@ -25,6 +21,7 @@ export interface ScreenProps extends ScrollViewProps {
   onBlur?: () => void;
   onBeforeRemove?: (event: BeforeRemoveEvent) => Promise<void>;
   uiElements?: UIElements;
+  hideUIElements?: boolean;
   uiSpacing?: boolean;
   background?: React.ReactNode;
 }
@@ -34,6 +31,7 @@ export const Screen = ({
   onBlur,
   onBeforeRemove,
   uiElements,
+  hideUIElements = false,
   uiSpacing = true,
   ...props
 }: ScreenProps) => {
@@ -42,37 +40,15 @@ export const Screen = ({
   const {addListener, removeListener} = useNavigation();
   const Component = props.scrollEnabled === false ? View : ScrollView;
 
-  const setUiElements = () => {
-    if (uiElements) {
-      for (const key in uiElements) {
-        const anchor = key as UIAnchor;
-        if (!uiElements[anchor]) {
-          uiElements[anchor] = <></>;
-        }
-      }
-    }
-
-    UIContextManipulator?.setElements({...uiElements});
-  };
-
-  useEffect(() => {
-    setUiElements();
-  }, [uiElements]);
-
   const focus = () => {
-    setUiElements();
-
-    if (screenConfig?.modal) {
-      navigation.setOptions({headerShown: false});
-    } else {
-      navigation.setOptions({headerMode: 'float'});
-    }
+    UIContextManipulator?.setElements(uiElements);
+    navigation.setOptions({header: () => <UI hide={!!screenConfig?.modal} />});
     onFocus?.();
   };
 
   const blur = () => {
     if (!screenConfig?.modal) {
-      navigation.setOptions({headerMode: 'screen'});
+      navigation.setOptions({header: () => <UI hide={true} />});
     }
     onBlur?.();
   };
@@ -101,15 +77,15 @@ export const Screen = ({
   const uiSpacingStyles =
     uiSpacing && screenConfig
       ? {
-          marginTop: UIElementSpacing.top[screenConfig.name],
-          marginLeft: UIElementSpacing.left[screenConfig.name],
-          marginBottom: UIElementSpacing.bottom[screenConfig.name],
-          marginRight: UIElementSpacing.right[screenConfig.name],
+          marginTop: UIElementSpacing.top,
+          marginLeft: UIElementSpacing.left,
+          marginBottom: UIElementSpacing.bottom,
+          marginRight: UIElementSpacing.right,
         }
       : null;
 
   return (
-    <Animated.View style={[{flex: 1}, uiSpacingStyles]}>
+    <Animated.View style={[styles.flex, uiSpacingStyles]}>
       <Component
         importantForAccessibility="no"
         showsVerticalScrollIndicator={false}
