@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import {onComponentMount} from '../hooks';
 import {nav} from '../navigation/nav';
-import {useScreenConfig} from '../navigation/screen';
+import {getScreenConfig, useScreenConfig} from '../navigation/screen';
 import {BeforeRemoveEvent} from '../types/events';
 import {UIElements, UIContextManipulator, UIElementSpacing} from '../context/UI';
 import { UI } from '@jsinek/react-native-skeleton/components/UI';
@@ -42,16 +42,30 @@ export const Screen = ({
 
   const focus = () => {
     UIContextManipulator?.setElements(uiElements);
-    if (!screenConfig?.modal) { 
-      navigation.setOptions({ header: () => <UI hide={!!screenConfig?.modal} /> });
+
+    if (screenConfig?.modal) { 
+      navigation.setOptions({headerMode: 'screen'});
+    } else {
+      navigation.setOptions({
+        header: () => <UI hide={!!screenConfig?.modal} />,
+      });
+      setTimeout(() => {
+        navigation.setOptions({ headerMode: 'float' });
+      }, 160);
     }
+
     onFocus?.();  
   };
 
   const blur = () => {
-    if (!screenConfig?.modal) {
+    const currentRouteScreenConfig = getScreenConfig();
+
+    if (currentRouteScreenConfig?.modal) {
       navigation.setOptions({headerMode: 'screen'});
+    } else {
+      navigation.setOptions({header: () => <UI hide={true} />});
     }
+    
     onBlur?.();
   };
 
