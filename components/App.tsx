@@ -61,8 +61,7 @@ export const App = ({
             <>
               <Navigator
                 initialRouteName={initialScreenName}
-                screenOptions={{
-                  // headerStyleInterpolator: () => ({}),
+                screenOptions={{                  
                   cardShadowEnabled: false,
                   headerMode: 'float',
                 }}>

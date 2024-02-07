@@ -42,13 +42,15 @@ export const Screen = ({
 
   const focus = () => {
     UIContextManipulator?.setElements(uiElements);
-    navigation.setOptions({header: () => <UI hide={!!screenConfig?.modal} />});
-    onFocus?.();
+    if (!screenConfig?.modal) { 
+      navigation.setOptions({ header: () => <UI hide={!!screenConfig?.modal} /> });
+    }
+    onFocus?.();  
   };
 
   const blur = () => {
     if (!screenConfig?.modal) {
-      navigation.setOptions({header: () => <UI hide={true} />});
+      navigation.setOptions({headerMode: 'screen'});
     }
     onBlur?.();
   };
