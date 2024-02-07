@@ -64,6 +64,7 @@ export const App = ({
                 screenOptions={{                  
                   cardShadowEnabled: false,
                   headerMode: 'float',
+                  headerStyle: { height: 0 }
                 }}>
                 {screens?.map(config => {
                   return (
