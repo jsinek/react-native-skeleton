@@ -39,6 +39,7 @@ export const Screen = ({
   const navigation = useNavigation();
   const {addListener, removeListener} = useNavigation();
   const Component = props.scrollEnabled === false ? View : ScrollView;
+  const isModal = screenConfig?.modal;
 
   const focus = () => {
     UIContextManipulator?.setElements(uiElements);
@@ -91,7 +92,7 @@ export const Screen = ({
   });
 
   const uiSpacingStyles =
-    uiSpacing && screenConfig
+    uiSpacing && screenConfig && !isModal
       ? {
           marginTop: UIElementSpacing.top,
           marginLeft: UIElementSpacing.left,
