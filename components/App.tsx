@@ -28,6 +28,24 @@ export const navOptions: {override?: NavigationOptions} = {
   override: {},
 };
 
+
+const NavigationHelper: {
+  isReady: boolean;
+  setIsReady: (bool: boolean) => void;
+} = {
+  isReady: false,
+  setIsReady: () => {}
+};
+
+export const useNavigatorIsReady = () => {
+  const [isReady, setIsReady] = useState(NavigationHelper.isReady);
+  NavigationHelper.setIsReady = (bool: boolean) => {
+    NavigationHelper.isReady = bool;
+    setIsReady(bool);
+  };
+  return isReady;
+};
+
 export const App = ({
   screens,
   initialScreenName,
@@ -37,7 +55,8 @@ export const App = ({
   ...props
 }: AppProps) => {
   screenConfigs = screens;
-  const [navigatorReady, setNavigatorReady] = useState(false);
+
+  const [navigationIsReady, setNavigationIsReady] = useState(false);
 
   return (
     <UIProvider defaultElements={uiElements}>
@@ -56,12 +75,16 @@ export const App = ({
           }}
           {...navigationContainerProps}
           ref={navRef}
-          onReady={() => setNavigatorReady(true)}>
-          {navigatorReady && (
+          onReady={() => {
+            setNavigationIsReady(true);
+            NavigationHelper.setIsReady(true);
+          }}
+        >
+          {navigationIsReady &&
             <>
               <Navigator
                 initialRouteName={initialScreenName}
-                screenOptions={{                  
+                screenOptions={{
                   cardShadowEnabled: false,
                   headerMode: 'float',
                   headerStyle: { height: 0 }
@@ -86,11 +109,10 @@ export const App = ({
                     />
                   );
                 })}
-                      
               </Navigator>
               {props.children}
-              </>
-          )}
+            </>
+          }
         </NavigationContainer>
       </SafeAreaProvider>
     </UIProvider>
