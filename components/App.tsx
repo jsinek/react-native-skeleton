@@ -10,7 +10,7 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {AppProps, ScreenConfig} from '../types/skeleton';
 import {ModalOverlay} from './ModalOverlay';
 import {transitions} from '../navigation/transitions';
-import {UIProvider} from '../context/UI';
+import {UIContextProvider} from '../context/UI';
 
 export let screenConfigs: ScreenConfig[];
 const {Navigator, Screen} = createStackNavigator();
@@ -59,7 +59,7 @@ export const App = ({
   const [navigationIsReady, setNavigationIsReady] = useState(false);
 
   return (
-    <UIProvider defaultElements={uiElements}>
+    <UIContextProvider defaultElements={uiElements}>
       <SafeAreaProvider>
         <NavigationContainer
           theme={{
@@ -115,6 +115,6 @@ export const App = ({
           }
         </NavigationContainer>
       </SafeAreaProvider>
-    </UIProvider>
+    </UIContextProvider>
   );
 };

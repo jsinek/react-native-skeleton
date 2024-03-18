@@ -1,18 +1,18 @@
 import {useNavigation} from '@react-navigation/native';
 import React from 'react';
 import {
-  Animated,
   ScrollViewProps,
   StyleSheet,
   View,
   ScrollView,
   Dimensions,
+  ViewProps,
 } from 'react-native';
 import {onComponentMount} from '../hooks';
 import {nav} from '../navigation/nav';
 import {getScreenConfig, useScreenConfig} from '../navigation/screen';
 import {BeforeRemoveEvent} from '../types/events';
-import {UIElements, UIContextManipulator, UIElementSpacing} from '../context/UI';
+import {UIElements, useUILeftLayout, useUIRightLayout, useUITopLayout, useUIBottomLayout, UIHelper} from '../context/UI';
 import { UI } from '@jsinek/react-native-skeleton/components/UI';
 export const screenDimensions = Dimensions.get('screen');
 
@@ -39,10 +39,12 @@ export const Screen = ({
   const navigation = useNavigation();
   const {addListener, removeListener} = useNavigation();
   const Component = props.scrollEnabled === false ? View : ScrollView;
-  const isModal = screenConfig?.modal;
 
   const focus = () => {
-    UIContextManipulator?.setElements(uiElements);
+    UIHelper.setTop(uiElements?.top);
+    UIHelper.setLeft(uiElements?.left);
+    UIHelper.setRight(uiElements?.right);
+    UIHelper.setBottom(uiElements?.bottom);
 
     if (screenConfig?.modal) { 
       navigation.setOptions({headerMode: 'screen'});
@@ -91,18 +93,8 @@ export const Screen = ({
     };
   });
 
-  const uiSpacingStyles =
-    uiSpacing && screenConfig && !isModal
-      ? {
-          marginTop: UIElementSpacing.top,
-          marginLeft: UIElementSpacing.left,
-          marginBottom: UIElementSpacing.bottom,
-          marginRight: UIElementSpacing.right,
-        }
-      : null;
-
   return (
-    <Animated.View style={[styles.flex, uiSpacingStyles]}>
+    <ScreenWrapper>
       <Component
         importantForAccessibility="no"
         showsVerticalScrollIndicator={false}
@@ -113,9 +105,27 @@ export const Screen = ({
       >
         {props.children}
       </Component>
-    </Animated.View>
+    </ScreenWrapper>
   );
 };
+
+const ScreenWrapper = ({ ...rest }: ViewProps) => {
+  const layouts = {
+    top: useUITopLayout(),
+    left: useUILeftLayout(),
+    right: useUIRightLayout(),
+    bottom: useUIBottomLayout(),
+  };
+
+  const style = {
+    marginTop: layouts.top.height,
+    marginLeft: layouts.left.width,
+    marginBottom: layouts.bottom.height,
+    marginRight: layouts.right.width,
+  };
+  
+  return <View {...rest} style={[styles.flex, style, rest.style]} />
+}
 
 const styles = StyleSheet.create({
   flex: {

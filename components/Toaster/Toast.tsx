@@ -1,5 +1,5 @@
 import React from 'react';
-import {Animated, StyleSheet, Text} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 
 export type ToastType = 'success' | 'error' | 'warning' | 'message';
 export type ToastColors = {
@@ -29,9 +29,9 @@ export const Toast = ({
   const backgroundColor = colors[type].background;
 
   return (
-    <Animated.View style={[styles.toast, {backgroundColor}]}>
+    <View style={[styles.toast, {backgroundColor}]}>
       <Text style={{color}}>{message}</Text>
-    </Animated.View>
+    </View>
   );
 };
 

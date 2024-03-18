@@ -1,8 +1,11 @@
 import React, {useRef} from 'react';
-import {Animated, View, ViewProps} from 'react-native';
+import {View, ViewProps} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {nav} from '../navigation/nav';
-import {UIElementSpacing} from '@jsinek/react-native-skeleton/context/UI';
+import { UITopSpacer } from '@jsinek/react-native-skeleton/components/UI/TopSpacer';
+import { UIBottomSpacer } from '@jsinek/react-native-skeleton/components/UI/BottomSpacer';
+import { UILeftSpacer } from '@jsinek/react-native-skeleton/components/UI/LeftSpacer';
+import { UIRightSpacer } from '@jsinek/react-native-skeleton/components/UI/RightSpacer';
 
 export interface SpacerProps extends ViewProps {
   size?: number;
@@ -41,34 +44,16 @@ export const Spacer = ({
       style={[flex ? {flex: 1, borderWidth: 10} : null, props.style]}>
       <View pointerEvents="none" style={[{width, aspectRatio: 1}]} />
       {uiTop ? (
-        <Animated.View
-          pointerEvents="none"
-          style={{width: UIElementSpacing.top[screen.current], aspectRatio: 1}}
-        />
+        <UITopSpacer />
       ) : null}
       {uiBottom ? (
-        <Animated.View
-          pointerEvents="none"
-          style={{
-            width: UIElementSpacing.bottom[screen.current],
-            aspectRatio: 1,
-          }}
-        />
+        <UIBottomSpacer />
       ) : null}
       {uiLeft ? (
-        <Animated.View
-          pointerEvents="none"
-          style={{width: UIElementSpacing.left[screen.current], aspectRatio: 1}}
-        />
+        <UILeftSpacer />
       ) : null}
       {uiRight ? (
-        <Animated.View
-          pointerEvents="none"
-          style={{
-            width: UIElementSpacing.right[screen.current],
-            aspectRatio: 1,
-          }}
-        />
+        <UIRightSpacer />
       ) : null}
     </View>
   );
