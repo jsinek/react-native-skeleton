@@ -94,7 +94,7 @@ export const Screen = ({
   });
 
   return (
-    <ScreenWrapper>
+    <ScreenWrapper isModal={screenConfig?.modal}>
       <Component
         importantForAccessibility="no"
         showsVerticalScrollIndicator={false}
@@ -109,9 +109,11 @@ export const Screen = ({
   );
 };
 
-const ScreenWrapper = ({ ...rest }: ViewProps) => {
-  const screenConfig = useScreenConfig();
+interface ScreenWrapperProps extends ViewProps { 
+  isModal?: boolean;
+}
 
+const ScreenWrapper = ({ isModal = false,...rest }: ScreenWrapperProps) => {
   const layouts = {
     top: useUITopLayout(),
     left: useUILeftLayout(),
@@ -119,7 +121,7 @@ const ScreenWrapper = ({ ...rest }: ViewProps) => {
     bottom: useUIBottomLayout(),
   };
 
-  const style = screenConfig?.modal ? {} : {
+  const style = isModal ? {} : {
     marginTop: layouts.top.height,
     marginLeft: layouts.left.width,
     marginBottom: layouts.bottom.height,

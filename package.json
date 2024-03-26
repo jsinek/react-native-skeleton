@@ -1,6 +1,6 @@
 {
   "name": "@jsinek/react-native-skeleton",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "This package provides a base structure and supplemental utilities allowing for the creation of a flexible, customizeable, and powerful UI.",
   "main": "index.ts",
   "scripts": {
