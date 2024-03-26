@@ -28,13 +28,13 @@ export interface AppProps {
 }
 
 export type Transition = (
-  animatedValue: AnimatedValue,
+  animatedValue: AnimatedValue
 ) => Animated.WithAnimatedObject<ViewStyle> | null;
 
 export type SkeletonNavigationConfig = (
   name: string,
   params?: object,
-  options?: NavigationOptions,
+  options?: NavigationOptions
 ) => void;
 
 type Nav = typeof navRef;
@@ -43,6 +43,6 @@ export interface SkeletonNav extends Omit<Nav, 'goBack'> {
   goTo: SkeletonNavigationConfig;
   resetTo: SkeletonNavigationConfig;
   replace: SkeletonNavigationConfig;
-  goBack: ({ignoreCooldown}: {ignoreCooldown: boolean, cooldownTime: number}) => void;
+  goBack: (options?: {ignoreCooldown: boolean; cooldownTime: number}) => void;
   push: SkeletonNavigationConfig;
 }
