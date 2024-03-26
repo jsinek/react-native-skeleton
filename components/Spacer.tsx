@@ -1,7 +1,6 @@
-import React, {useRef} from 'react';
+import React from 'react';
 import {View, ViewProps} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {nav} from '../navigation/nav';
 import { UITopSpacer } from '@jsinek/react-native-skeleton/components/UI/TopSpacer';
 import { UIBottomSpacer } from '@jsinek/react-native-skeleton/components/UI/BottomSpacer';
 import { UILeftSpacer } from '@jsinek/react-native-skeleton/components/UI/LeftSpacer';
@@ -30,7 +29,6 @@ export const Spacer = ({
   ...props
 }: SpacerProps) => {
   const safeInsets = useSafeAreaInsets();
-  const screen = useRef(nav.getCurrentRoute()?.name || '');
   let width = 0;
   if (!uiTop && safeTop) width += safeInsets.top;
   if (!uiTop && safeBottom) width += safeInsets.bottom;

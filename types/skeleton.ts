@@ -38,10 +38,11 @@ export type SkeletonNavigationConfig = (
 ) => void;
 
 type Nav = typeof navRef;
-export interface SkeletonNav extends Nav {
+export interface SkeletonNav extends Omit<Nav, 'goBack'> {
   tmpTransition?: StackCardStyleInterpolator;
   goTo: SkeletonNavigationConfig;
   resetTo: SkeletonNavigationConfig;
   replace: SkeletonNavigationConfig;
+  goBack: ({ignoreCooldown}: {ignoreCooldown: boolean, cooldownTime: number}) => void;
   push: SkeletonNavigationConfig;
 }

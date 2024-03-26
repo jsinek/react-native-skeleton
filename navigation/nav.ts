@@ -7,6 +7,8 @@ import {navOptions} from '@jsinek/react-native-skeleton/components/App';
 
 export const navRef = createNavigationContainerRef();
 
+let tmpPreventGoBack = false;
+
 export const nav: SkeletonNav = {
   ...navRef,
   tmpTransition: undefined,
@@ -38,6 +40,16 @@ export const nav: SkeletonNav = {
     setTimeout(() => {
       this.tmpTransition = undefined;
     });
+  },
+  goBack(options) {
+    if (tmpPreventGoBack && !options?.ignoreCooldown) return;
+
+    tmpPreventGoBack = true;  
+    navRef.goBack();
+
+    setTimeout(() => {
+      tmpPreventGoBack = false;
+    }, options?.cooldownTime || 200);
   },
   canGoBack: () => navRef.isReady() && navRef.canGoBack(),
 };

@@ -110,6 +110,8 @@ export const Screen = ({
 };
 
 const ScreenWrapper = ({ ...rest }: ViewProps) => {
+  const screenConfig = useScreenConfig();
+
   const layouts = {
     top: useUITopLayout(),
     left: useUILeftLayout(),
@@ -117,7 +119,7 @@ const ScreenWrapper = ({ ...rest }: ViewProps) => {
     bottom: useUIBottomLayout(),
   };
 
-  const style = {
+  const style = screenConfig?.modal ? {} : {
     marginTop: layouts.top.height,
     marginLeft: layouts.left.width,
     marginBottom: layouts.bottom.height,

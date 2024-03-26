@@ -93,7 +93,6 @@ export const UIContextProvider = ({
     setBottom(layout === undefined ? defaultElements?.bottom : layout);
   };
   UIHelper.setLeft = (layout) => {
-    console.log('SET LEFT', layout, layout === undefined ? 'A' : 'B');
     setLeft(layout === undefined ? defaultElements?.left : layout);
   };
   UIHelper.setRight = (layout) => {
