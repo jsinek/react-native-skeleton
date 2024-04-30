@@ -7,11 +7,11 @@ export function useScreenConfig() {
   useNavigation();
   const screenName = nav.getCurrentRoute()?.name;
   const configs = screenConfigs || [];
-  return configs.find(config => config.name === screenName) || null;
+  return configs.find(config => config.name === screenName);
 }
 
 export function getScreenConfig() {
   const screenName = nav.getCurrentRoute()?.name;
   const configs = (screenConfigs || []) as ScreenConfig[];
-  return configs.find(config => config.name === screenName) || null;
+  return configs.find(config => config.name === screenName);
 }

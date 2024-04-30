@@ -17,7 +17,7 @@ import {
   Transition,
   SkeletonNavigationConfig,
 } from './types/skeleton';
-import {BeforeRemoveEvent} from '@jsinek/react-native-skeleton/types/events';
+import {BeforeRemoveEvent} from './types/events';
 import {transition} from './navigation/transition';
 import {transitions} from './navigation/transitions';
 

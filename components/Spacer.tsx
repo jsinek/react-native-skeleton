@@ -1,10 +1,8 @@
+import { UISpacer } from './UI/UISpacer';
+import { UIPosition } from '../types/ui';
 import React from 'react';
 import {View, ViewProps} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import { UITopSpacer } from '@jsinek/react-native-skeleton/components/UI/TopSpacer';
-import { UIBottomSpacer } from '@jsinek/react-native-skeleton/components/UI/BottomSpacer';
-import { UILeftSpacer } from '@jsinek/react-native-skeleton/components/UI/LeftSpacer';
-import { UIRightSpacer } from '@jsinek/react-native-skeleton/components/UI/RightSpacer';
 
 export interface SpacerProps extends ViewProps {
   size?: number;
@@ -42,16 +40,16 @@ export const Spacer = ({
       style={[flex ? {flex: 1, borderWidth: 10} : null, props.style]}>
       <View pointerEvents="none" style={[{width, aspectRatio: 1}]} />
       {uiTop ? (
-        <UITopSpacer />
+        <UISpacer edge={UIPosition.TOP} />
       ) : null}
       {uiBottom ? (
-        <UIBottomSpacer />
+        <UISpacer edge={UIPosition.BOTTOM} />
       ) : null}
       {uiLeft ? (
-        <UILeftSpacer />
+        <UISpacer edge={UIPosition.LEFT} />
       ) : null}
       {uiRight ? (
-        <UIRightSpacer />
+        <UISpacer edge={UIPosition.RIGHT} />
       ) : null}
     </View>
   );

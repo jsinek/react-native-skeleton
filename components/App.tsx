@@ -28,8 +28,7 @@ export const navOptions: {override?: NavigationOptions} = {
   override: {},
 };
 
-
-const NavigationHelper: {
+export const NavigationHelper: {
   isReady: boolean;
   setIsReady: (bool: boolean) => void;
 } = {
@@ -58,6 +57,11 @@ export const App = ({
 
   const [navigationIsReady, setNavigationIsReady] = useState(false);
 
+  const onReady = () => {
+    setNavigationIsReady(true);
+    NavigationHelper.setIsReady(true);
+  };
+
   return (
     <UIContextProvider defaultElements={uiElements}>
       <SafeAreaProvider>
@@ -75,10 +79,7 @@ export const App = ({
           }}
           {...navigationContainerProps}
           ref={navRef}
-          onReady={() => {
-            setNavigationIsReady(true);
-            NavigationHelper.setIsReady(true);
-          }}
+          onReady={onReady}
         >
           {navigationIsReady &&
             <>

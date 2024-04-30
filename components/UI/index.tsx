@@ -1,27 +1,21 @@
 import React from 'react';
 import {Dimensions} from 'react-native';
 export const screenDimensions = Dimensions.get('screen');
-import { TopUI } from './Top';
-import { LeftUI } from './Left';
-import { RightUI } from './Right';
-import { BottomUI } from './Bottom';
+import { UIPosition } from '../../types/ui';
+import { UIElement } from './UIElement';
 
 export interface UIProps {
-  header?: React.ReactNode;
-  footer?: React.ReactNode;
-  leftSidebar?: React.ReactNode;
-  rightSidebar?: React.ReactNode;
+  hide?: boolean;
 }
 
-export const UI = ({ hide = false }: { hide?: boolean; }) => {
-  if (hide) return <></>;
-
-  return (
+export const UI = ({ hide = false }: UIProps) =>
+  hide ?
+    <></>
+  :
     <>
-      <TopUI />
-      <LeftUI />
-      <RightUI />
-      <BottomUI />
+      <UIElement edge={UIPosition.TOP} />
+      <UIElement edge={UIPosition.LEFT} />
+      <UIElement edge={UIPosition.RIGHT} />
+      <UIElement edge={UIPosition.BOTTOM} />
     </>
-  );
-};
+;

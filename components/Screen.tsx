@@ -6,14 +6,15 @@ import {
   View,
   ScrollView,
   Dimensions,
-  ViewProps,
+  Animated,
 } from 'react-native';
 import {onComponentMount} from '../hooks';
 import {nav} from '../navigation/nav';
 import {getScreenConfig, useScreenConfig} from '../navigation/screen';
 import {BeforeRemoveEvent} from '../types/events';
-import {UIElements, useUILeftLayout, useUIRightLayout, useUITopLayout, useUIBottomLayout, UIHelper} from '../context/UI';
-import { UI } from '@jsinek/react-native-skeleton/components/UI';
+import {UIContext} from '../context/UI';
+import {UI} from './UI';
+import {UIElements} from '../types/ui';
 export const screenDimensions = Dimensions.get('screen');
 
 export interface ScreenProps extends ScrollViewProps {
@@ -21,9 +22,6 @@ export interface ScreenProps extends ScrollViewProps {
   onBlur?: () => void;
   onBeforeRemove?: (event: BeforeRemoveEvent) => Promise<void>;
   uiElements?: UIElements;
-  hideUIElements?: boolean;
-  uiSpacing?: boolean;
-  background?: React.ReactNode;
 }
 
 export const Screen = ({
@@ -31,8 +29,6 @@ export const Screen = ({
   onBlur,
   onBeforeRemove,
   uiElements,
-  hideUIElements = false,
-  uiSpacing = true,
   ...props
 }: ScreenProps) => {
   const screenConfig = useScreenConfig();
@@ -41,20 +37,12 @@ export const Screen = ({
   const Component = props.scrollEnabled === false ? View : ScrollView;
 
   const focus = () => {
-    UIHelper.setTop(uiElements?.top);
-    UIHelper.setLeft(uiElements?.left);
-    UIHelper.setRight(uiElements?.right);
-    UIHelper.setBottom(uiElements?.bottom);
+    UIContext.setElements(uiElements);
 
-    if (screenConfig?.modal) { 
-      navigation.setOptions({headerMode: 'screen'});
-    } else {
+    if (!screenConfig?.modal) { 
       navigation.setOptions({
         header: () => <UI hide={!!screenConfig?.modal} />,
       });
-      setTimeout(() => {
-        navigation.setOptions({ headerMode: 'float' });
-      }, 160);
     }
 
     onFocus?.();  
@@ -93,8 +81,15 @@ export const Screen = ({
     };
   });
 
+  const wrapperStyle = screenConfig?.modal ? {} : {
+    marginTop: UIContext.layout.top.height,
+    marginLeft: UIContext.layout.left.width,
+    marginBottom: UIContext.layout.bottom.height,
+    marginRight: UIContext.layout.right.width,
+  };
+
   return (
-    <ScreenWrapper isModal={screenConfig?.modal}>
+    <Animated.View style={[styles.flex, wrapperStyle]}>
       <Component
         importantForAccessibility="no"
         showsVerticalScrollIndicator={false}
@@ -105,31 +100,9 @@ export const Screen = ({
       >
         {props.children}
       </Component>
-    </ScreenWrapper>
+    </Animated.View>
   );
 };
-
-interface ScreenWrapperProps extends ViewProps { 
-  isModal?: boolean;
-}
-
-const ScreenWrapper = ({ isModal = false,...rest }: ScreenWrapperProps) => {
-  const layouts = {
-    top: useUITopLayout(),
-    left: useUILeftLayout(),
-    right: useUIRightLayout(),
-    bottom: useUIBottomLayout(),
-  };
-
-  const style = isModal ? {} : {
-    marginTop: layouts.top.height,
-    marginLeft: layouts.left.width,
-    marginBottom: layouts.bottom.height,
-    marginRight: layouts.right.width,
-  };
-  
-  return <View {...rest} style={[styles.flex, style, rest.style]} />
-}
 
 const styles = StyleSheet.create({
   flex: {
@@ -137,19 +110,5 @@ const styles = StyleSheet.create({
   },
   flexGrow: {
     flexGrow: 1,
-  },
-  header: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 1,
-  },
-  footer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    zIndex: 1,
   },
 });
