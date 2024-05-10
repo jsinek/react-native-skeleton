@@ -49,7 +49,7 @@ export const nav: SkeletonNav = {
 
     setTimeout(() => {
       tmpPreventGoBack = false;
-    }, options?.cooldownTime || 200);
+    }, options?.cooldownTime || 2000);
   },
   canGoBack: () => navRef.isReady() && navRef.canGoBack(),
 };
