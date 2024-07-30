@@ -14,7 +14,8 @@ import {getScreenConfig, useScreenConfig} from '../navigation/screen';
 import {BeforeRemoveEvent} from '../types/events';
 import {UIContext} from '../context/UI';
 import {UI} from './UI';
-import {UIElements} from '../types/ui';
+import {UIElements, UIPosition} from '../types/ui';
+import { UISpacer } from '@jsinek/react-native-skeleton/components/UI/UISpacer';
 export const screenDimensions = Dimensions.get('screen');
 
 export interface ScreenProps extends ScrollViewProps {
@@ -22,6 +23,7 @@ export interface ScreenProps extends ScrollViewProps {
   onBlur?: () => void;
   onBeforeRemove?: (event: BeforeRemoveEvent) => Promise<void>;
   uiElements?: UIElements;
+  uiSpacing?: boolean;
 }
 
 export const Screen = ({
@@ -29,6 +31,7 @@ export const Screen = ({
   onBlur,
   onBeforeRemove,
   uiElements,
+  uiSpacing = true,
   ...props
 }: ScreenProps) => {
   const screenConfig = useScreenConfig();
@@ -81,10 +84,8 @@ export const Screen = ({
     };
   });
 
-  const wrapperStyle = screenConfig?.modal ? {} : {
-    marginTop: UIContext.layout.top.height,
+  const wrapperStyle = screenConfig?.modal || !uiSpacing ? {} : {
     marginLeft: UIContext.layout.left.width,
-    marginBottom: UIContext.layout.bottom.height,
     marginRight: UIContext.layout.right.width,
   };
 
@@ -98,7 +99,9 @@ export const Screen = ({
         style={[styles.flex, props.style]}
         contentContainerStyle={[styles.flexGrow, props.contentContainerStyle]}
       >
+        {uiSpacing && <UISpacer edge={UIPosition.TOP} />}
         {props.children}
+        {uiSpacing && <UISpacer edge={UIPosition.BOTTOM} />}
       </Component>
     </Animated.View>
   );
