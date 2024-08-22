@@ -9,7 +9,7 @@ import {
 import { UIContext, useUIElements } from '../../context/UI'
 import { getScreenConfig } from '../../navigation/screen'
 import { UIPosition } from '../../types/ui'
-export const screenDimensions = Dimensions.get('screen')
+export const screenDimensions = Dimensions.get('window')
 
 export interface UIElementProps extends ViewProps {
   edge: UIPosition
