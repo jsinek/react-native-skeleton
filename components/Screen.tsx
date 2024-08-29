@@ -40,14 +40,12 @@ export const Screen = ({
   const Component = props.scrollEnabled === false ? View : ScrollView;
 
   const focus = () => {
-    UIContext.setElements(uiElements);
-
     if (!screenConfig?.modal) { 
+      UIContext.setElements(uiElements);
       navigation.setOptions({
         header: () => <UI hide={!!screenConfig?.modal} />,
       });
     }
-
     onFocus?.();  
   };
 

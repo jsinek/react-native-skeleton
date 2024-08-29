@@ -2,6 +2,9 @@ import {
   CardStyleInterpolators,
   StackCardInterpolationProps,
 } from '@react-navigation/stack';
+import { Animated } from 'react-native';
+import conditional from '@react-navigation/stack/src/utils/conditional';
+const { multiply } = Animated;
 
 export const transitions = {
   none: () => {
@@ -167,4 +170,43 @@ export const transitions = {
   fade: CardStyleInterpolators.forFadeFromCenter,
   scaleFromCenter: CardStyleInterpolators.forScaleFromCenterAndroid,
   slideUp: CardStyleInterpolators.forBottomSheetAndroid,
+  slideDown: ({
+    current,
+    closing,
+    inverted,
+    layouts: {screen},
+  }: StackCardInterpolationProps) => {
+    const translateY = multiply(
+    current.progress.interpolate({
+      inputRange: [0, 1],
+      outputRange: [-screen.height * 0.8, 0],
+      extrapolate: 'clamp',
+    }),
+    inverted,
+    );
+    
+  const opacity = conditional(
+    closing,
+    current.progress,
+    current.progress.interpolate({
+      inputRange: [0, 1],
+      outputRange: [0, 1],
+      extrapolate: 'clamp',
+    })
+  );
+
+  const overlayOpacity = current.progress.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, 0.3],
+    extrapolate: 'clamp',
+  });
+
+  return {
+    cardStyle: {
+      opacity,
+      transform: [{ translateY }],
+    },
+    overlayStyle: { opacity: overlayOpacity },
+  };
+  },
 };

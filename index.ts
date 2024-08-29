@@ -18,7 +18,6 @@ import {
   SkeletonNavigationConfig,
 } from './types/skeleton';
 import {BeforeRemoveEvent} from './types/events';
-import {transition} from './navigation/transition';
 import {transitions} from './navigation/transitions';
 
 export {
@@ -33,7 +32,6 @@ export {
   toast,
   onComponentMount,
   onComponentUnmount,
-  transition,
   transitions,
 
   //constants
