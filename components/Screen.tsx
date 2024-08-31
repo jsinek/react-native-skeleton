@@ -97,9 +97,9 @@ export const Screen = ({
         style={[styles.flex, props.style]}
         contentContainerStyle={[styles.flexGrow, props.contentContainerStyle]}
       >
-        {uiSpacing && <UISpacer edge={UIPosition.TOP} />}
+        {!screenConfig?.modal && uiSpacing && <UISpacer edge={UIPosition.TOP} />}
         {props.children}
-        {uiSpacing && <UISpacer edge={UIPosition.BOTTOM} />}
+        {!screenConfig?.modal && uiSpacing && <UISpacer edge={UIPosition.BOTTOM} />}
       </Component>
     </Animated.View>
   );
