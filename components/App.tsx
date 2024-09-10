@@ -11,6 +11,8 @@ import {AppProps, ScreenConfig} from '../types/skeleton';
 import {ModalOverlay} from './ModalOverlay';
 import {transitions} from '../navigation/transitions';
 import {UIContextProvider} from '../context/UI';
+import { AnimatedValue } from '@jsinek/react-native-skeleton';
+import { Animated } from 'react-native';
 
 export let screenConfigs: ScreenConfig[];
 const {Navigator, Screen} = createStackNavigator();
@@ -45,6 +47,8 @@ export const useNavigatorIsReady = () => {
   return isReady;
 };
 
+export const edgeSpace:{[key: string]: {[key: string]: {height: AnimatedValue, width: AnimatedValue}}} = {};
+
 export const App = ({
   screens,
   initialScreenName,
@@ -56,6 +60,31 @@ export const App = ({
   screenConfigs = screens;
 
   const [navigationIsReady, setNavigationIsReady] = useState(false);
+
+  if (!Object.keys(edgeSpace).length) { 
+    screens.map((screen) => {
+      if (!edgeSpace[screen.name]) { 
+        edgeSpace[screen.name] = {
+          top: {
+            height: new Animated.Value(0),
+            width: new Animated.Value(0),
+          },
+          bottom: {
+            height: new Animated.Value(0),
+            width: new Animated.Value(0),
+          },
+          left: {
+            height: new Animated.Value(0),
+            width: new Animated.Value(0),
+          },
+          right: {
+            height: new Animated.Value(0),
+            width: new Animated.Value(0),
+          },
+        };
+      }
+    })
+  }
 
   const onReady = () => {
     setNavigationIsReady(true);

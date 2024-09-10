@@ -1,31 +1,11 @@
 import { UIElements } from '../types/ui';
 import React, {useContext, useState} from 'react';
-import {Animated,ViewProps, LayoutRectangle} from 'react-native';
+import {ViewProps} from 'react-native';
 
 export const UIContext = {
   elements: React.createContext<UIElements>({}),
   setElements: (_elements: Partial<UIElements> | undefined) => { },
-  layout: {
-    top: {
-      height: new Animated.Value(0),
-      width: new Animated.Value(0),
-    },
-    bottom: {
-      height: new Animated.Value(0),
-      width: new Animated.Value(0),
-    },
-    left: {
-      height: new Animated.Value(0),
-      width: new Animated.Value(0),
-    },
-    right: {
-      height: new Animated.Value(0),
-      width: new Animated.Value(0),
-    },
-  }
 };
-
-export const UIElementLayouts:{[key: string]: LayoutRectangle} = {};
 
 export const UIContextProvider = ({
   defaultElements,

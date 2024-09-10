@@ -6,9 +6,10 @@ import {
   View,
   ViewProps,
 } from 'react-native'
-import { UIContext, useUIElements } from '../../context/UI'
+import { useUIElements } from '../../context/UI'
 import { getScreenConfig } from '../../navigation/screen'
 import { UIPosition } from '../../types/ui'
+import { edgeSpace } from '@jsinek/react-native-skeleton/components/App'
 export const screenDimensions = Dimensions.get('window')
 
 export interface UIElementProps extends ViewProps {
@@ -18,10 +19,14 @@ export interface UIElementProps extends ViewProps {
 export const UIElement = ({ edge, ...rest }: UIElementProps) => {
   const onLayout = (e: LayoutChangeEvent) => {
     const screen = getScreenConfig()
-    if (screen?.name) {
-      UIContext.layout[edge].height.setValue(e.nativeEvent.layout.height)
-      UIContext.layout[edge].width.setValue(e.nativeEvent.layout.width)
+    const layout = e.nativeEvent.layout;
+    const edges = edgeSpace[screen?.name || ''];
+   
+    if (edges && !screen?.modal) {
+      edges[edge].height.setValue(layout.height);
+      edges[edge].width.setValue(layout.width);
     }
+
     rest.onLayout?.(e)
   }
 

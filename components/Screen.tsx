@@ -1,5 +1,5 @@
 import {useNavigation} from '@react-navigation/native';
-import React from 'react';
+import React, {useRef } from 'react';
 import {
   ScrollViewProps,
   StyleSheet,
@@ -14,8 +14,8 @@ import {getScreenConfig, useScreenConfig} from '../navigation/screen';
 import {BeforeRemoveEvent} from '../types/events';
 import {UIContext} from '../context/UI';
 import {UI} from './UI';
-import {UIElements, UIPosition} from '../types/ui';
-import { UISpacer } from '@jsinek/react-native-skeleton/components/UI/UISpacer';
+import {UIElements} from '../types/ui';
+import {edgeSpace } from '@jsinek/react-native-skeleton/components/App';
 export const screenDimensions = Dimensions.get('screen');
 
 export interface ScreenProps extends ScrollViewProps {
@@ -35,9 +35,11 @@ export const Screen = ({
   ...props
 }: ScreenProps) => {
   const screenConfig = useScreenConfig();
+  const screenName = useRef(screenConfig?.name || '');
   const navigation = useNavigation();
   const {addListener, removeListener} = useNavigation();
   const Component = props.scrollEnabled === false ? View : ScrollView;
+  const edges = edgeSpace[screenName.current || ''];
 
   const focus = () => {
     if (!screenConfig?.modal) { 
@@ -82,9 +84,9 @@ export const Screen = ({
     };
   });
 
-  const wrapperStyle = screenConfig?.modal || !uiSpacing ? {} : {
-    marginLeft: UIContext.layout.left.width,
-    marginRight: UIContext.layout.right.width,
+  const wrapperStyle = !uiSpacing ? {} : {
+    marginLeft: edges?.left.width,
+    marginRight: edges?.right.width,
   };
 
   return (
@@ -96,10 +98,10 @@ export const Screen = ({
         {...props}
         style={[styles.flex, props.style]}
         contentContainerStyle={[styles.flexGrow, props.contentContainerStyle]}
-      >
-        {!screenConfig?.modal && uiSpacing && <UISpacer edge={UIPosition.TOP} />}
+      > 
+        {uiSpacing && <Animated.View style={{ height: edges?.top.height, }} />}
         {props.children}
-        {!screenConfig?.modal && uiSpacing && <UISpacer edge={UIPosition.BOTTOM} />}
+        {uiSpacing && <Animated.View style={{ height: edges?.bottom.height, }} />}
       </Component>
     </Animated.View>
   );
